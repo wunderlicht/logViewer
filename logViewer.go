@@ -11,7 +11,7 @@ import (
 const (
 	colorStd   = "[white:black]"
 	colorError = "[red]"
-	colorFatal  = "[yellow:red]"
+	colorFatal = "[yellow:red]"
 )
 
 func main() {
@@ -33,7 +33,7 @@ func main() {
 			case strings.Contains(line, "FATAL"):
 				line = colorFatal + line + colorStd
 			}
-			textView.Write([]byte(line + "\n"))
+			_, _ = textView.Write([]byte(line + "\n"))
 		}
 		if err := scanner.Err(); err != nil {
 			panic(err)
