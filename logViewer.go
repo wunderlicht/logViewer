@@ -17,11 +17,12 @@ const (
 func main() {
 	app := tview.NewApplication()
 	textView := tview.NewTextView().
-		SetDynamicColors(true).
-		SetChangedFunc(func() {
-			app.Draw()
-		})
-	textView.SetBorder(true).SetTitle("Stdin")
+		SetDynamicColors(true)
+	textView.SetBorder(true).
+		SetTitle("Stdin")
+	grid := tview.NewGrid().
+		SetRows(1, -1)
+	grid.AddItem(textView, 1, 0, 1, 1, 1, 1, true)
 
 	go func() {
 		scanner := bufio.NewScanner(os.Stdin)
@@ -33,14 +34,17 @@ func main() {
 			case strings.Contains(line, "FATAL"):
 				line = colorFatal + line + colorStd
 			}
-			_, _ = textView.Write([]byte(line + "\n"))
+
+			app.QueueUpdateDraw(func() {
+				_, _ = textView.Write([]byte(line + "\n"))
+			})
 		}
 		if err := scanner.Err(); err != nil {
 			panic(err)
 		}
 	}()
 
-	if err := app.SetRoot(textView, true).Run(); err != nil {
+	if err := app.SetRoot(grid, true).Run(); err != nil {
 		panic(err)
 	}
 }
